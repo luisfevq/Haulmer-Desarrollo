@@ -1,0 +1,23 @@
+<p>
+  comentario works! {{ id }}
+</p>
+
+
+<div class="mat-elevation-z8">
+  <div *ngIf="cargando">
+    <mat-spinner style="margin:0 auto;" mode="indeterminate"></mat-spinner>
+  </div>
+  <table *ngIf="!cargando" mat-table [dataSource]="dataSource">
+
+    <!-- Symbol Column -->
+    <ng-container matColumnDef="coment">
+      <th mat-header-cell *matHeaderCellDef> Comentarios </th>
+      <td mat-cell *matCellDef="let element" > {{element.coment}} </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+
+  <mat-paginator [pageSizeOptions]="[5, 10, 20, 50]" showFirstLastButtons></mat-paginator>
+</div>
