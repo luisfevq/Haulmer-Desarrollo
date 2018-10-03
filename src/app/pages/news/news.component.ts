@@ -1,4 +1,4 @@
-import { Component, ViewChild, OnInit, ChangeDetectorRef, OnDestroy } from '@angular/core';
+import { Component, ViewChild, OnInit, ChangeDetectorRef, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
 
 // Angular Material
 import {MatPaginator, MatTableDataSource} from '@angular/material';
@@ -12,9 +12,10 @@ import { NewsInterfaz } from '../../../model/new';
 @Component({
   selector: 'app-news',
   templateUrl: './news.component.html',
-  styleUrls: ['./news.component.css']
+  styleUrls: ['./news.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class NewsComponent implements OnInit {
+export class NewsComponent implements OnInit, OnDestroy {
 
   topNews:NewsInterfaz[] = [];
   cargando:boolean = true;
@@ -24,14 +25,16 @@ export class NewsComponent implements OnInit {
   
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
+  
+
   ngOnInit() { 
     this.dataSource.paginator = this.paginator;
     this.paginator.pageSize = 50;
     this.showTopNews();
   }
-  // ngOnDestroy(){
-  //   this.changeDetectorRefs.detach();
-  // }
+  ngOnDestroy(){    
+    this.changeDetectorRefs.detach();
+  }
 
   constructor(public newsService: NewsService, private changeDetectorRefs: ChangeDetectorRef){}
 
@@ -52,7 +55,10 @@ export class NewsComponent implements OnInit {
 
               this.topNews.push(news);
               this.dataSource.data = this.topNews;
-              this.changeDetectorRefs.detectChanges();
+              if (!this.changeDetectorRefs['destroyed']) {
+                // this.changeDetectionRef.detectChanges();
+                this.changeDetectorRefs.detectChanges();
+              }
               
             });          
           });

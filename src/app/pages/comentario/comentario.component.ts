@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ChangeDetectorRef, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 
 // Route
 import { ActivatedRoute } from '@angular/router';
@@ -12,7 +12,8 @@ import { NewsInterfaz } from '../../../model/new';
 @Component({
   selector: 'app-comentario',
   templateUrl: './comentario.component.html',
-  styleUrls: ['./comentario.component.css']
+  styleUrls: ['./comentario.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ComentarioComponent implements OnInit, OnDestroy {
 
@@ -27,10 +28,10 @@ export class ComentarioComponent implements OnInit, OnDestroy {
 
 
   ngOnDestroy() {
-    this.ref.detach();
-    this.ref.detectChanges();
+    // this.ref.detach(); // try this
   }
   ngOnInit() {
+    // this.ref.detach();
     this.dataSource.paginator = this.paginator;
     this.paginator.pageSize = 50;
     this.id = this.route.snapshot.paramMap.get('id');
@@ -60,8 +61,16 @@ export class ComentarioComponent implements OnInit, OnDestroy {
               };
 
               this.comment.push(news);
-              this.dataSource.data = this.comment;
-              this.ref.detectChanges();
+              // setTimeout(() => {
+                this.dataSource.data = this.comment;
+                
+                if (!this.ref['destroyed']) {
+                  // this.changeDetectionRef.detectChanges();
+                  this.ref.detectChanges();
+                }
+                // this.ref.detectChanges();
+              // }, 1000);
+              // this.ref.detectChanges();
               this.cargando = false;      
             });          
         });
